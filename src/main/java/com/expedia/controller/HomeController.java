@@ -7,11 +7,14 @@ package com.expedia.controller;
 
 import com.expedia.domain.Hotel;
 import com.expedia.service.HotelOffersService;
+import com.expedia.service.HotelOffersService.Filter;
+import static com.expedia.util.Utils.toStringArray;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -22,15 +25,16 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 
 	@RequestMapping("/")
-	public ModelAndView home() {
-		Map<String, String> params = new HashMap<>();
+	public ModelAndView home(WebRequest request) {
+		Map<String, String[]> params = new HashMap<>();
 
-		params.put("scenario", "deal-finder");
-		params.put("page", "1");
-		params.put("uid", "foo");
-		params.put("productType", "Hotel");
+		params.put("scenario", toStringArray("deal-finder"));
+		params.put("page", toStringArray("1"));
+		params.put("uid", toStringArray("foo"));
+		params.put("productType", toStringArray("Hotel"));
+		params.putAll(request.getParameterMap());
 
-		Hotel[] hotels = hotelOffersService.getHotelOffer(params).getOffers().getHotels();
+		Hotel[] hotels = hotelOffersService.getHotelOffer(Filter.parseWebParams(params)).getOffers().getHotels();
 		
 		ModelAndView model = new ModelAndView();
 		model.setViewName("home");
@@ -39,7 +43,7 @@ public class HomeController {
 		System.out.println(hotels.length);
 		
 		return model;
-	}
+	}	
 
 	@Autowired
 	private HotelOffersService hotelOffersService;
