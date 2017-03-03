@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -150,6 +151,9 @@
 											<div class="col-md-2"><span style="font-weight: bold">Total Price:</span> ${hotel.hotelPricingInfo.totalPriceValue}</div>										
 											<div class="col-md-2"><span style="font-weight: bold">Star Rate: </span>${hotel.hotelInfo.hotelStarRating}</div>
 											<div class="col-md-2"><span style="font-weight: bold">Guest Rate: </span>${hotel.hotelInfo.hotelGuestReviewRating}</div>
+											<div class="col-md-2"><span style="font-weight: bold">Stay: </span>${hotel.offerDateRange.lengthOfStay} Days</div>
+											<div class="col-md-2"><span style="font-weight: bold">From Date: </span>${fn:join(hotel.offerDateRange.travelStartDate, '-')}</div>
+											<div class="col-md-2"><span style="font-weight: bold">To Date: </span>${fn:join(hotel.offerDateRange.travelEndDate, '-')}</div>
 										</div>
 									</div>
 								</div>
