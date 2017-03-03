@@ -32,7 +32,7 @@ public class HotelOffersService {
 		private String destinationCity;
 		private String[] regionIds;
 		private Date minTripStartDate;
-		private Date maxTripStartDate;
+		private Date maxTripStartDate;		
 		private Integer lengthOfStay;
 		private Double minStarRating;
 		private Double maxStarRating;
@@ -112,7 +112,7 @@ public class HotelOffersService {
 			this.minTripStartDate = minTripStartDate;
 			return this;
 		}
-
+		
 		public Date maxTripStartDate() {
 			return maxTripStartDate;
 		}
@@ -120,7 +120,7 @@ public class HotelOffersService {
 		public Filter maxTripStartDate(Date maxTripStartDate) {
 			this.maxTripStartDate = maxTripStartDate;
 			return this;
-		}
+		}	
 
 		public Integer lengthOfStay() {
 			return lengthOfStay;
@@ -202,7 +202,10 @@ public class HotelOffersService {
 					String[] v = params.get(name);
 					
 					if (v != null && v.length != 0) {
-						Class fieldClz = field.getType();					
+						Class fieldClz = field.getType();	
+						if (v.length == 1 && "".equals(v[0].trim())) {		//Ignore empty parameters
+							continue;
+						}
 						try {
 							if (fieldClz == Double.class) {
 								field.set(filter, Double.parseDouble(v[0]));

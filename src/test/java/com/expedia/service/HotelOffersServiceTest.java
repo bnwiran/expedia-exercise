@@ -6,7 +6,6 @@
 package com.expedia.service;
 
 import com.expedia.domain.Hotel;
-import com.expedia.domain.HotelOffer;
 import com.expedia.service.HotelOffersService.Filter;
 import com.expedia.util.Utils;
 import static com.expedia.util.Utils.*;
@@ -45,6 +44,17 @@ public class HotelOffersServiceTest {
 				.minTripStartDate(new Date()).regionIds("123,456");
 
 	@Test
+	public void testHotelServiceLengthOfStay() throws ParseException {
+		Filter filter = new Filter().uid("foo").scenario("deal-finder").page(1).productType("Hotel")
+				.lengthOfStay(3);
+		Hotel[] hotels = service.getHotelOffer(filter).getOffers().getHotels();
+		for (Hotel hotel : hotels) {
+			assertEquals(3, hotel.getOfferDateRange().getLengthOfStay());
+		}
+	}
+	
+	@Test
+	
 	public void testHotelServiceTotalRate() throws ParseException {
 		Integer minTotalRate = 4000;
 		Integer maxTotalRate = 5000;
@@ -82,7 +92,8 @@ public class HotelOffersServiceTest {
 	
 	@Test
 	public void testHotelServiceDestinationName() {
-		Filter filter = new Filter().uid("foo").scenario("deal-finder").page(1).productType("Hotel").destinationName("Miami");
+		Filter filter = new Filter().uid("foo").scenario("deal-finder").page(1).productType("Hotel")
+				.destinationCity("Miami");
 		Hotel[] hotels = service.getHotelOffer(filter).getOffers().getHotels();
 		
 		assertTrue(hotels != null && hotels.length > 0);

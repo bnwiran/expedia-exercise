@@ -11,6 +11,7 @@ import com.expedia.service.HotelOffersService.Filter;
 import static com.expedia.util.Utils.toStringArray;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,24 +28,36 @@ public class HomeController {
 	@RequestMapping("/")
 	public ModelAndView home(WebRequest request) {
 		Map<String, String[]> params = new HashMap<>();
+		String destination = request.getParameter("destination");
 
 		params.put("scenario", toStringArray("deal-finder"));
 		params.put("page", toStringArray("1"));
 		params.put("uid", toStringArray("foo"));
 		params.put("productType", toStringArray("Hotel"));
 		params.putAll(request.getParameterMap());
+		
+		Filter filter = Filter.parseWebParams(params);
+		
+		if (destination != null && !"".equals(destination)) {
+			if (destination.matches("(\\d*,?)+")) {
+				filter.regionIds(destination.split(","));
+			} else {
+				filter.destinationName(destination);
+			}
+		}
 
-		Hotel[] hotels = hotelOffersService.getHotelOffer(Filter.parseWebParams(params)).getOffers().getHotels();
+		Hotel[] hotels = hotelOffersService.getHotelOffer(filter).getOffers().getHotels();
 		
 		ModelAndView model = new ModelAndView();
 		model.setViewName("home");
 		model.addObject("hotels", hotels);
-		
-		System.out.println(hotels.length);
-		
+		model.addObject("stayLengths", stayLengths);
+		request.getParameterNames().forEachRemaining(p -> model.addObject(p, request.getParameter(p)));
 		return model;
 	}	
 
 	@Autowired
 	private HotelOffersService hotelOffersService;
+	
+	private static final int[] stayLengths = IntStream.range(0, 15).toArray();
 }
